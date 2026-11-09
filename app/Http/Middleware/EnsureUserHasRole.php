@@ -12,12 +12,11 @@ class EnsureUserHasRole
     /**
      * @param  Closure(Request): (Response)  $next
      */
-    public function handle(Request $request, Closure $next, string $role): Response
+    public function handle(Request $request, Closure $next, string ...$roles): Response
     {
-        $user = $request->user();
-        $requiredRole = UserRole::tryFrom($role);
+        $allowed = array_filter(array_map(UserRole::tryFrom(...), $roles));
 
-        if (! $user || ! $requiredRole || $user->role !== $requiredRole) {
+        if ($request->user() === null || ! in_array($request->user()->role, $allowed, true)) {
             abort(403);
         }
 

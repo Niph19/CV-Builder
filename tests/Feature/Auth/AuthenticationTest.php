@@ -41,18 +41,60 @@ test('users cannot authenticate with invalid password', function () {
     $this->assertGuest();
 });
 
-test('siswa cannot access the admin dashboard', function () {
+test('session id is regenerated after login', function () {
     $user = User::factory()->create();
 
-    $this->actingAs($user)->get('/admin')->assertForbidden();
+    $this->get('/login');
+    $before = session()->getId();
+
+    $this->post('/login', [
+        'email' => $user->email,
+        'password' => 'password',
+    ]);
+
+    expect(session()->getId())->not->toBe($before);
 });
 
-test('admin can access the admin dashboard', function () {
-    $admin = User::factory()->admin()->create();
+test('login is rate limited after five failed attempts', function () {
+    $user = User::factory()->create();
 
-    $this->actingAs($admin)->get('/admin')->assertOk();
+    foreach (range(1, 5) as $attempt) {
+        $this->post('/login', [
+            'email' => $user->email,
+            'password' => 'wrong-password',
+        ]);
+    }
+
+    $response = $this->post('/login', [
+        'email' => $user->email,
+        'password' => 'password',
+    ]);
+
+    $response->assertSessionHasErrors('email');
+    $this->assertGuest();
 });
 
-test('guests are redirected to login when accessing the admin dashboard', function () {
+test('guests are redirected to login when accessing protected pages', function () {
+    $this->get('/dashboard')->assertRedirect('/login');
     $this->get('/admin')->assertRedirect('/login');
+    $this->get('/profile')->assertRedirect('/login');
+});
+
+test('siswa cannot access the siswa dashboard via admin path or vice versa', function () {
+    $admin = User::factory()->admin()->create();
+    $siswa = User::factory()->create();
+    $alumni = User::factory()->alumni()->create();
+
+    $this->actingAs($siswa)->get('/admin')->assertForbidden();
+    $this->actingAs($alumni)->get('/admin')->assertForbidden();
+    $this->actingAs($admin)->get('/admin')->assertOk();
+    $this->actingAs($admin)->get('/dashboard')->assertForbidden();
+});
+
+test('logout invalidates the session', function () {
+    $user = User::factory()->create();
+
+    $this->actingAs($user)->post('/logout');
+
+    $this->assertGuest();
 });

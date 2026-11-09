@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\EnsureUserHasRole;
 use App\Http\Middleware\SecurityHeaders;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -17,10 +18,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->append(SecurityHeaders::class);
 
         $middleware->alias([
-            'role' => \App\Http\Middleware\EnsureUserHasRole::class,
+            'role' => EnsureUserHasRole::class,
         ]);
-
-        $middleware->throttleApi();
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(

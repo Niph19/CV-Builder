@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -30,9 +29,7 @@ class AuthTokenController extends Controller
 
         $user->tokens()->where('name', $credentials['device_name'])->delete();
 
-        $abilities = $user->role === UserRole::Admin
-            ? ['admin']
-            : ['siswa'];
+        $abilities = [$user->role->value];
 
         $token = $user->createToken($credentials['device_name'], $abilities, now()->addDays(7));
 
