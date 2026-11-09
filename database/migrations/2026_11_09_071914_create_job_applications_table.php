@@ -11,7 +11,8 @@ return new class extends Migration
         Schema::create('application_status_logs', function (Blueprint $table) {
             $table->id();
             $table->foreignId('application_id')->constrained('job_applications')->cascadeOnDelete();
-            $table->enum('status', ['diproses', 'wawancara', 'diterima', 'ditolak'])->default('diproses');
+            $table->enum('old_status', ['diproses', 'wawancara', 'diterima', 'ditolak'])->default('diproses');
+            $table->enum('new_status', ['diproses', 'wawancara', 'diterima', 'ditolak'])->nullable();
             $table->foreignId('changed_by')->constrained('users');
             $table->timestamp('changed_at')->useCurrent();
         });
