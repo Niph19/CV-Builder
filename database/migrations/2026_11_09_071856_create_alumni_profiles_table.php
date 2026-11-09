@@ -11,7 +11,6 @@ return new class extends Migration
         Schema::create('alumni_profiles', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->unique()->constrained()->cascadeOnDelete();
-            $table->string('nama_lengkap', 150);
             $table->string('jurusan', 100);
             $table->year('tahun_lulus');
             $table->enum('status_saat_ini', ['bekerja', 'kuliah', 'wirausaha', 'mencari_kerja', 'lainnya']);
@@ -20,7 +19,6 @@ return new class extends Migration
             $table->string('no_hp', 20)->nullable();
             $table->text('alamat')->nullable();
             $table->timestamps();
-
             $table->index('tahun_lulus');
             $table->index('status_saat_ini');
         });

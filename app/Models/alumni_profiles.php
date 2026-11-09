@@ -9,7 +9,7 @@ class alumni_profiles extends Model
 {
     //
     protected $Fillable = [
-        'nama_lengkap',
+        'user_id',
         'jurusan',
         'tahun_lulus',
         'status_saat_ini',
