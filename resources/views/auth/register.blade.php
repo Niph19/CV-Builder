@@ -32,7 +32,7 @@
             <div>
                 <x-input-label for="password" value="Password" />
                 <x-text-input id="password" class="mt-1 block w-full" type="password" name="password" required autocomplete="new-password" />
-                <p class="mt-1 text-xs text-forest/60">Minimal 12 karakter, gabungan huruf besar, kecil, angka, dan simbol.</p>
+                <p class="mt-1 text-xs text-forest/60">Minimal 8 karakter.</p>
                 <x-input-error :messages="$errors->get('password')" class="mt-2" />
             </div>
 

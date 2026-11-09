@@ -51,12 +51,26 @@ test('registration rejects weak passwords', function () {
         'name' => 'Siswa Lemah',
         'email' => 'lemah@example.com',
         'role' => 'siswa',
-        'password' => 'password',
-        'password_confirmation' => 'password',
+        'password' => 'pendek',
+        'password_confirmation' => 'pendek',
     ]);
 
     $response->assertSessionHasErrors('password');
     $this->assertGuest();
+});
+
+test('registration accepts lowercase passwords without symbols', function () {
+    $response = $this->post('/register', [
+        'name' => 'Siswa Sederhana',
+        'email' => 'sederhana@example.com',
+        'role' => 'siswa',
+        'password' => 'rahasia123',
+        'password_confirmation' => 'rahasia123',
+    ]);
+
+    $this->assertAuthenticated();
+    $response->assertSessionHasNoErrors();
+    expect(User::where('email', 'sederhana@example.com')->exists())->toBeTrue();
 });
 
 test('registration cannot escalate to admin', function () {

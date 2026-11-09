@@ -21,11 +21,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Password::defaults(fn () => Password::min(12)
-            ->mixedCase()
-            ->numbers()
-            ->symbols()
-            ->uncompromised());
+        Password::defaults(fn () => Password::min(8));
 
         if ($this->app->environment('production')) {
             URL::forceScheme('https');

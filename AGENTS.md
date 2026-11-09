@@ -226,8 +226,8 @@ di atas, PRD menang; perbarui bagian ini saat konvensi berubah.
 
 ## Keamanan
 
-- Password baru wajib mengikuti `Password::defaults()` (min 12, campuran, simbol,
-  `uncompromised`) dari `AppServiceProvider`.
+- Password baru wajib mengikuti `Password::defaults()` (min 8 karakter, tanpa
+  syarat kapital/angka/simbol) dari `AppServiceProvider`.
 - Semua form web memakai CSRF bawaan; jangan nonaktifkan `SecurityHeaders`.
 - Cookie sesi: `HttpOnly`, `SameSite=Lax`, `Secure` otomatis di non-local,
   `SESSION_ENCRYPT=true`.

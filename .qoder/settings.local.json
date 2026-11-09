@@ -76,7 +76,11 @@
       "Bash(cd /c/laragon/www/CV-Builder && echo \"=== routes/web.php ===\" && cat routes/web.php && echo \"=== routes/admin.php ===\" && cat routes/admin.php 2>/dev/null && echo \"=== middleware alias ===\" && grep -n \"role\\\\|api\" bootstrap/app.php)",
       "Bash(cd /c/laragon/www/CV-Builder && echo \"=== UserProfileController ===\" && cat app/Http/Controllers/UserProfileController.php && echo \"=== UserProfileRequest ===\" && cat app/Http/Requests/UserProfileRequest.php && echo \"=== UserProfile model ===\" && cat app/Models/UserProfile.php)",
       "Bash(cd /c/laragon/www/CV-Builder && echo \"=== tests list ===\" && find tests -name \"*.php\" | sort && echo \"=== test names ===\" && grep -rhn \"it\\(\\\\|test\\(\" tests/Feature --include=*.php | sed 's/^[[:space:]]*//' | head -50)",
-      "Bash(cd /c/laragon/www/CV-Builder && echo \"=== alumni fields di user_profiles ===\" && cat database/migrations/*create_user_profiles_table.php && echo \"=== dashboard siswa ===\" && cat resources/views/dashboard.blade.php)"
+      "Bash(cd /c/laragon/www/CV-Builder && echo \"=== alumni fields di user_profiles ===\" && cat database/migrations/*create_user_profiles_table.php && echo \"=== dashboard siswa ===\" && cat resources/views/dashboard.blade.php)",
+      "Bash(cd /c/laragon/www/CV-Builder && echo \"=== seeder/factory/docs ===\" && grep -rn \"password\" database/seeders database/factories docs/ 2>/dev/null | head -20 && echo \"=== AGENTS/docs teks aturan ===\" && grep -rn \"min 12\\\\|minimal 12\\\\|simbol\\\\|symbol\" AGENTS.md docs/ resources/views 2>/dev/null)",
+      "Bash(cd /c/laragon/www/CV-Builder && sed -n '108,112p;193,196p' docs/keterangan-sprint-autentikasi-abbad.md && echo \"=== AGENTS 225,235 ===\" && sed -n '225,235p' AGENTS.md)",
+      "Bash(cd /c/laragon/www/CV-Builder && php artisan test 2>&1 | grep -E \"⨯|Tests:|FAILED\" ; echo \"=== PINT ===\" ; ./vendor/bin/pint --test 2>&1 | tail -3)",
+      "Bash(cd /c/laragon/www/CV-Builder && php artisan test 2>&1 | grep -E \"⨯|Tests:|FAILED\")"
     ]
   }
 }
