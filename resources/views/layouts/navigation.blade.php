@@ -21,6 +21,10 @@
                         <x-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
                             Admin
                         </x-nav-link>
+                    @else
+                        <x-nav-link :href="route('profile.data.edit')" :active="request()->routeIs('profile.data.*')">
+                            Data Diri
+                        </x-nav-link>
                     @endif
                 </div>
             </div>
@@ -82,6 +86,10 @@
             @if (Auth::user()->isAdmin())
                 <x-responsive-nav-link :href="route('admin.dashboard')" :active="request()->routeIs('admin.dashboard')">
                     Admin
+                </x-responsive-nav-link>
+            @else
+                <x-responsive-nav-link :href="route('profile.data.edit')" :active="request()->routeIs('profile.data.*')">
+                    Data Diri
                 </x-responsive-nav-link>
             @endif
         </div>
