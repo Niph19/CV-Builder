@@ -42,7 +42,7 @@
 
         <p class="mt-6 text-center text-sm text-forest/70">
             Belum punya akun?
-            <a href="{{ route('register') }}" class="font-semibold text-moss hover:text-forest">Daftar sebagai siswa</a>
+            <a href="{{ route('register') }}" class="font-semibold text-moss hover:text-forest">Daftar sebagai siswa/alumni</a>
         </p>
     </div>
 </x-guest-layout>
