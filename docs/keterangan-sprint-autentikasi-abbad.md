@@ -1,7 +1,7 @@
 # Keterangan Teknis — Sprint Autentikasi (Abbad)
 
 Dokumen ini merupakan keterangan tertulis (semacam kontrak kerja teknis) untuk
-sprint backlog **No. 1–3** yang dikerjakan oleh **Abbad** pada proyek
+sprint backlog **No. 1–4** yang dikerjakan oleh **Abbad** pada proyek
 **Sistem CV Builder — SMK Informatika Pesat**.
 
 | Item | Keterangan |
@@ -13,7 +13,7 @@ sprint backlog **No. 1–3** yang dikerjakan oleh **Abbad** pada proyek
 | Stack | Laravel 13, Laravel Breeze (Blade), Laravel Sanctum 4.3, Tailwind CSS 3, Alpine.js, Vite 8 |
 | PIC Sprint | Abbad |
 | Tanggal | 9 November 2026 |
-| Status | **Selesai** — 25 test otomatis lulus, build aset berhasil |
+| Status | **Selesai** — 36 test otomatis lulus, build aset berhasil |
 
 ---
 
@@ -22,9 +22,12 @@ sprint backlog **No. 1–3** yang dikerjakan oleh **Abbad** pada proyek
 | No | User Story / Tugas | Target | Status |
 | :--- | :--- | :--- | :--- |
 | 1 | Membuat desain halaman register & login | 1 hari | Selesai |
-| 2 | Membuat fitur register siswa | 1 hari | Selesai |
-| 3 | Membuat fitur login siswa dan admin | 1 hari | Selesai |
+| 2 | Membuat fitur register siswa (dengan status siswa/alumni) | 1 hari | Selesai |
+| 3 | Membuat fitur login siswa dan admin + pembatasan akses by role | 1 hari | Selesai |
+| 4 | Halaman profil data diri siswa (pendidikan, pengalaman, skill) | 1 hari | Selesai |
 | — | Penambahan pengamanan autentikasi (permintaan tambahan) | — | Selesai |
+
+> Disesuaikan dengan PRD pada `AGENTS.md` (peran **siswa, alumni, admin**).
 
 ---
 
@@ -37,18 +40,28 @@ sprint backlog **No. 1–3** yang dikerjakan oleh **Abbad** pada proyek
 - Pesan antarmuka dalam Bahasa Indonesia.
 - Tampilan responsif (mobile & desktop).
 
-### 2.2 Register Siswa
-- Hanya dapat mendaftar sebagai **siswa**; role tidak dapat dikirim dari form
-  (di-hardcode menjadi `siswa`, sehingga tidak bisa di-escalate ke admin).
-- Validasi: nama wajib, email unik + format valid, password dikonfirmasi.
-- Setelah register langsung login dan diarahkan ke dashboard siswa.
+### 2.2 Register Siswa & Alumni
+- Pendaftar memilih **status**: Siswa aktif atau Alumni.
+- Role `admin` **tidak dapat** dikirim dari form; bila dicoba, request ditolak
+  dengan error validasi (tidak ada akun yang dibuat).
+- Validasi: nama wajib, email unik + format valid, password dikonfirmasi dan kuat.
+- Setelah register langsung login dan diarahkan ke `/dashboard`.
 
-### 2.3 Login Siswa dan Admin
-- Satu halaman login untuk kedua peran.
+### 2.3 Login Siswa, Alumni, dan Admin
+- Satu halaman login untuk ketiga peran.
 - Setelah login, pengguna diarahkan otomatis berdasarkan peran:
   - **Admin** → `/admin`
-  - **Siswa** → `/dashboard`
+  - **Siswa / Alumni** → `/dashboard`
 - Setelah logout, sesi dihapus total dan token CSRF dibuat ulang.
+
+### 2.4 Profil Data Diri (sumber data CV & AI)
+- Halaman `/profile/data` untuk siswa dan alumni.
+- Data: Nomor HP, alamat, jurusan, tahun lulus, pendidikan, pengalaman, skill,
+  link portofolio, dan LinkedIn.
+- Skill wajib diisi; tahun lulus divalidasi (alumni: tahun lampau) agar AI punya
+  data minimum untuk dianalisis.
+- Satu baris `user_profiles` per pengguna (relasi 1:1), tersimpan/terupdate otomatis.
+- Admin **tidak** dapat mengakses halaman ini (403).
 
 ---
 
@@ -57,15 +70,16 @@ sprint backlog **No. 1–3** yang dikerjakan oleh **Abbad** pada proyek
 | Area | URL | Middleware | Akses |
 | :--- | :--- | :--- | :--- |
 | Publik | `/`, `/login`, `/register` | `guest` (login/register) | Semua |
-| Siswa | `/dashboard` | `auth`, `role:siswa` | Siswa saja |
+| Siswa & Alumni | `/dashboard` | `auth`, `role:siswa,alumni` | Siswa, Alumni |
 | Admin | `/admin` | `auth`, `role:admin` | Admin saja |
-| Profil | `/profile` | `auth`, `password.confirm` | Semua pengguna login |
+| Profil akun | `/profile` | `auth`, `password.confirm` | Semua pengguna login |
+| Data diri | `/profile/data` | `auth`, `role:siswa,alumni`, `password.confirm` | Siswa, Alumni |
 | API | `/api/*` | `auth:sanctum` | Pemegang token valid |
 
-- Peran disimpan di kolom `users.role` (default `siswa`) dan dipetakan ke enum
-  `App\Enums\UserRole` (Siswa, Admin).
-- Middleware `EnsureUserHasRole` (`role:admin` / `role:siswa`) menolak akses
-  dengan **HTTP 403** bila peran tidak sesuai.
+- Peran disimpan di kolom `users.role` (enum DB: `siswa`, `alumni`, `admin`)
+  dan dipetakan ke enum `App\Enums\UserRole`.
+- Middleware `EnsureUserHasRole` menerima beberapa peran sekaligus
+  (`role:siswa,alumni`) dan menolak akses dengan **HTTP 403** bila tidak sesuai.
 - Route admin berada di file terpisah `routes/admin.php` dengan prefix `/admin`
   dan nama route `admin.*`.
 - Pengunjung yang belum login diarahkan ke `/login` (HTTP 302).
@@ -80,6 +94,9 @@ sprint backlog **No. 1–3** yang dikerjakan oleh **Abbad** pada proyek
 | Login siswa | Redirect → `/dashboard` (302) |
 | Siswa buka `/dashboard` | 200 OK |
 | Siswa buka `/admin` | 403 |
+| Login alumni | Redirect → `/dashboard` (302) |
+| Alumni buka `/dashboard` | 200 OK |
+| Alumni buka `/admin` | 403 |
 
 ---
 
@@ -172,6 +189,7 @@ endpoint admin berbasis API dapat dibatasi dengan `ability:admin`.
 | :--- | :--- | :--- |
 | Admin | `admin@pesat.sch.id` | `password` |
 | Siswa | `siswa@pesat.sch.id` | `password` |
+| Alumni | `alumni@pesat.sch.id` | `password` |
 
 > Password demo hanya untuk lingkungan lokal. Pada pengujian fitur ubah password,
 > kebijakan password baru (min. 12 karakter kompleks) tetap berlaku.
@@ -184,12 +202,13 @@ Perintah: `php artisan test`
 
 | Berkas Test | Cakupan | Jumlah |
 | :--- | :--- | :--- |
-| `tests/Feature/Auth/AuthenticationTest.php` | Login siswa/admin, redirect per peran, rate limit, regenerasi ID sesi, logout, proteksi halaman | 10 |
-| `tests/Feature/Auth/RegistrationTest.php` | Register siswa, tolak password lemah, tolak escalation role | 4 |
+| `tests/Feature/Auth/AuthenticationTest.php` | Login siswa/admin/alumni, redirect per peran, rate limit, regenerasi ID sesi, logout, proteksi halaman | 10 |
+| `tests/Feature/Auth/RegistrationTest.php` | Register siswa/alumni, tolak password lemah, tolak escalation ke admin | 6 |
 | `tests/Feature/SecurityTest.php` | Token (terbit, ability, revoke, expiry, rate limit), header keamanan, revoke token saat ganti password | 10 |
+| `tests/Feature/UserProfileTest.php` | Profil data diri: akses per peran, simpan/update, validasi, isolasi antar pengguna | 9 |
 | `tests/Feature/ExampleTest.php`, `tests/Unit/ExampleTest.php` | Smoke test | 2 |
 
-**Hasil akhir: 25 test lulus (66 assertions).**
+**Hasil akhir: 36 test lulus (95 assertions).**
 
 ---
 
@@ -209,9 +228,9 @@ php artisan serve
 
 ## 9. Batasan & Catatan Lanjutan
 
-- Dashboard admin dan siswa saat ini berupa **placeholder**; data monitoring,
-  alumni, job tracker, dan CV Builder akan dikerjakan pada sprint berikutnya
-  oleh PIC masing-masing.
+- Dashboard admin dan siswa/alumni saat ini berupa **placeholder**; data monitoring,
+  rekap alumni, lowongan, job tracker, dan CV Builder dikerjakan oleh PIC masing-masing
+  (Alief/Hanif/Salman/Syafiq) dan **tidak** termasuk pekerjaan ini.
 - Verifikasi email belum diaktifkan. Untuk peningkatan keamanan berikutnya,
   disarankan mengaktifkan `MustVerifyEmail` sebelum fitur CV diluncurkan.
 - `APP_DEBUG` wajib `false` di produksi.
