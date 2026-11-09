@@ -18,6 +18,18 @@ test('siswa is redirected to profile data after login', function () {
     $response->assertRedirect(route('profile.data.edit', absolute: false));
 });
 
+test('alumni is redirected to alumni profile after login', function () {
+    $alumni = User::factory()->alumni()->create();
+
+    $response = $this->post('/login', [
+        'email' => $alumni->email,
+        'password' => 'password',
+    ]);
+
+    $this->assertAuthenticatedAs($alumni);
+    $response->assertRedirect(route('alumni.profile.edit', absolute: false));
+});
+
 test('admin is redirected to admin dashboard after login', function () {
     $admin = User::factory()->admin()->create();
 

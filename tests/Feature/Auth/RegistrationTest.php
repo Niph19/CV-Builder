@@ -40,13 +40,13 @@ test('new alumni can register and is assigned the alumni role', function () {
     ]);
 
     $this->assertAuthenticated();
-    $response->assertRedirect(route('profile.data.edit', absolute: false));
+    $response->assertRedirect(route('alumni.profile.edit', absolute: false));
 
     $alumni = User::where('email', 'alumni@example.com')->first();
 
     expect($alumni->role)->toBe(UserRole::Alumni);
 
-    actingAsConfirmed($this, $alumni)->get('/profile/data')->assertOk();
+    actingAsConfirmed($this, $alumni)->get('/alumni/profile')->assertOk();
 });
 
 test('registration rejects weak passwords', function () {

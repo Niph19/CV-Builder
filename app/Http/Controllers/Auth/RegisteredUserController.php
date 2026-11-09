@@ -50,6 +50,9 @@ class RegisteredUserController extends Controller
 
         Auth::login($user);
 
-        return redirect(route('profile.data.edit', absolute: false));
+        return redirect(route(
+            $user->isAlumni() ? 'alumni.profile.edit' : 'profile.data.edit',
+            absolute: false,
+        ));
     }
 }
