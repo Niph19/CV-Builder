@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la && cat composer.json 2>/dev/null | head -40 && cat package.json 2>/dev/null)",
+      "Bash(find app routes database resources/views -type f -newermt \"2026-11-09 13:40\" 2>/dev/null | head -50)",
+      "Bash(for f in app/Enums/UserRole.php app/Http/Middleware/EnsureUserHasRole.php routes/auth.php app/Http/Controllers/Auth/AuthenticatedSessionController.php app/Http/Controllers/Auth/RegisteredUserController.php; do echo \"=== $f ===\"; cat \"$f\"; done; echo \"=== Auth dir ===\"; ls -R app/Http/Controllers/Auth app/Http/Requests app/View tests/Feature/Auth resources/views/auth resources/views/layouts resources/views/components)",
+      "Bash(grep -rn \"admin\" routes/ app/Http app/Providers bootstrap/ resources/views/layouts 2>/dev/null | grep -v \"\\\\.sqlite\"; echo \"=== TESTS ===\"; ls -R tests; echo \"=== RoleConfig ===\"; cat app/Http/Requests/Auth/LoginRequest.php | head -50)",
+      "Bash(cat tests/Feature/Auth/AuthenticationTest.php tests/Feature/Auth/RegistrationTest.php tests/Feature/ExampleTest.php; echo \"=== composer diff ===\"; git diff composer.json; echo \"=== PROFILE ===\"; cat resources/views/profile/edit.blade.php | head -30)",
+      "Bash(php artisan --version; php artisan route:list --except-vendor 2>&1 | head -40; echo \"=== APP NAME ===\"; grep -E \"^\\(APP_NAME|APP_URL|DB_CONNECTION\\)\" .env)",
+      "Bash(php artisan test 2>&1 | tail -20)",
+      "Bash(ls bootstrap/cache; echo \"--- migrations ---\"; php artisan migrate:status 2>&1 | tail -10)",
+      "Bash(npm install 2>&1 | tail -15 && npm run build 2>&1 | tail -20)",
+      "Bash(grep -c \"auth-atmosphere\\\\|text-forest\\\\|bg-moss\\\\|text-mint\" public/build/assets/*.css; grep -o \"\\\\.text-forest\\\\|\\\\.bg-moss\\\\|\\\\.text-ink\\\\|\\\\.text-fog\" public/build/assets/*.css | sort -u)",
+      "Bash(cat build 2>/dev/null; ls bootstrap/cache; php artisan optimize:clear 2>&1 | tail -5)",
+      "Bash(php artisan migrate --force 2>&1 | tail -15 && php artisan db:seed --force 2>&1 | tail -5)",
+      "Bash(php artisan route:list --path=admin 2>&1 | tail -5; php artisan view:clear 2>&1 | tail -2; php artisan test 2>&1 | tail -12)",
+      "Bash(php artisan test 2>&1 | tail -40)",
+      "Bash(composer require laravel/sanctum --no-interaction 2>&1 | tail -15)",
+      "Bash(php artisan vendor:publish --provider=\"Laravel\\\\Sanctum\\\\SanctumServiceProvider\" --no-interaction 2>&1 | tail -5; echo \"=== migrations ===\"; ls database/migrations; echo \"=== config ===\"; ls config | grep -i sanctum; echo \"=== api routes ===\"; ls routes)",
+      "Bash(grep -n \"stateful\\\\|guard\\\\|expiration\\\\|prefix\" config/sanctum.php | head -20)",
+      "Bash(grep -rn \"statefulApi\\\\|api:\" vendor/laravel/framework/src/Illuminate/Foundation/Configuration/Middleware.php | head -10)",
+      "Bash(grep -nE \"SESSION_|secure|http_only|same_site\" config/session.php | head -20)",
+      "Bash(sed -i 's/^SESSION_ENCRYPT=false/SESSION_ENCRYPT=true/; s/^SESSION_LIFETIME=120/SESSION_LIFETIME=60/' .env && sed -i 's/^SESSION_ENCRYPT=false/SESSION_ENCRYPT=true/; s/^SESSION_LIFETIME=120/SESSION_LIFETIME=60/' .env.example && grep -n \"SESSION_\" .env .env.example)",
+      "Bash(php artisan migrate --force 2>&1 | tail -6)"
+    ]
+  }
+}
