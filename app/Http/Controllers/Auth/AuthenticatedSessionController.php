@@ -31,7 +31,10 @@ class AuthenticatedSessionController extends Controller
         return redirect()->intended(
             $request->user()->isAdmin()
                 ? route('admin.dashboard', absolute: false)
-                : route('profile.data.edit', absolute: false)
+                : route(
+                    $request->user()->isAlumni() ? 'alumni.profile.edit' : 'profile.data.edit',
+                    absolute: false,
+                )
         );
     }
 

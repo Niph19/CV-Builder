@@ -68,6 +68,12 @@
                                     </x-dropdown-link>
                                 @endunless
 
+                                @if (auth()->user()->isAlumni())
+                                    <x-dropdown-link :href="route('alumni.profile.edit')">
+                                        Profil alumni
+                                    </x-dropdown-link>
+                                @endif
+
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
 

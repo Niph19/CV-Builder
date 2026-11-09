@@ -7,6 +7,9 @@
 .phpunit.result.cache
 opencode.json
 CLAUDE.md
+.agents/
+.claude/
+.qoder/
 /.codex
 /.cursor/
 /.idea
