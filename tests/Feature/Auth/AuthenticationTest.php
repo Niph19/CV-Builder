@@ -6,7 +6,7 @@ test('login screen can be rendered', function () {
     $this->get('/login')->assertOk();
 });
 
-test('siswa is redirected to siswa dashboard after login', function () {
+test('siswa is redirected to profile data after login', function () {
     $user = User::factory()->create();
 
     $response = $this->post('/login', [
@@ -15,7 +15,7 @@ test('siswa is redirected to siswa dashboard after login', function () {
     ]);
 
     $this->assertAuthenticatedAs($user);
-    $response->assertRedirect(route('dashboard', absolute: false));
+    $response->assertRedirect(route('profile.data.edit', absolute: false));
 });
 
 test('admin is redirected to admin dashboard after login', function () {
@@ -75,12 +75,12 @@ test('login is rate limited after five failed attempts', function () {
 });
 
 test('guests are redirected to login when accessing protected pages', function () {
-    $this->get('/dashboard')->assertRedirect('/login');
+    $this->get('/profile/data')->assertRedirect('/login');
     $this->get('/admin')->assertRedirect('/login');
     $this->get('/profile')->assertRedirect('/login');
 });
 
-test('siswa cannot access the siswa dashboard via admin path or vice versa', function () {
+test('siswa and alumni cannot access the admin area', function () {
     $admin = User::factory()->admin()->create();
     $siswa = User::factory()->create();
     $alumni = User::factory()->alumni()->create();
@@ -88,7 +88,6 @@ test('siswa cannot access the siswa dashboard via admin path or vice versa', fun
     $this->actingAs($siswa)->get('/admin')->assertForbidden();
     $this->actingAs($alumni)->get('/admin')->assertForbidden();
     $this->actingAs($admin)->get('/admin')->assertOk();
-    $this->actingAs($admin)->get('/dashboard')->assertForbidden();
 });
 
 test('logout invalidates the session', function () {

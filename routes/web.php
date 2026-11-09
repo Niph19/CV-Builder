@@ -8,12 +8,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'role:siswa,alumni'])->name('dashboard');
-
 Route::get('/home', function () {
-    return redirect()->route(auth()->user()->isAdmin() ? 'admin.dashboard' : 'dashboard');
+    return redirect()->route(auth()->user()->isAdmin() ? 'admin.dashboard' : 'profile.data.edit');
 })->middleware('auth')->name('home');
 
 Route::middleware(['auth', 'password.confirm'])->group(function () {

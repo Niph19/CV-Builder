@@ -22,7 +22,7 @@
                     <nav class="flex items-center gap-3">
                         @auth
                             <a href="{{ route('home') }}" class="rounded-lg bg-mint px-4 py-2 text-sm font-semibold text-forest hover:bg-white">
-                                Buka dashboard
+                                Buka aplikasi
                             </a>
                         @else
                             <a href="{{ route('login') }}" class="text-sm font-medium text-fog hover:text-white">Masuk</a>

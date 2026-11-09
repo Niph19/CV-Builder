@@ -24,7 +24,7 @@ test('new siswa can register and is assigned the siswa role', function () {
     ]);
 
     $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard', absolute: false));
+    $response->assertRedirect(route('profile.data.edit', absolute: false));
 
     expect(User::where('email', 'siswa@example.com')->first())
         ->role->toBe(UserRole::Siswa);
@@ -40,10 +40,13 @@ test('new alumni can register and is assigned the alumni role', function () {
     ]);
 
     $this->assertAuthenticated();
-    $response->assertRedirect(route('dashboard', absolute: false));
+    $response->assertRedirect(route('profile.data.edit', absolute: false));
 
-    $this->actingAs(User::where('email', 'alumni@example.com')->first())
-        ->get('/dashboard')->assertOk();
+    $alumni = User::where('email', 'alumni@example.com')->first();
+
+    expect($alumni->role)->toBe(UserRole::Alumni);
+
+    actingAsConfirmed($this, $alumni)->get('/profile/data')->assertOk();
 });
 
 test('registration rejects weak passwords', function () {

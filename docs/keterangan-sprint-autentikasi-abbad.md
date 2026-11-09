@@ -107,7 +107,7 @@ sprint backlog **No. 1–4** yang dikerjakan oleh **Abbad** pada proyek
 | Aspek | Implementasi |
 | :--- | :--- |
 | Hash password | Bcrypt (bawaan Laravel), tidak disimpan plaintext |
-| Kebijakan password | Minimal 12 karakter, huruf besar+kecil, angka, simbol, dicek terhadap daftar password bocor (`uncompromised`) |
+| Kebijakan password | Minimal 8 karakter; tanpa syarat huruf besar, angka, atau simbol |
 | Session hijacking | ID sesi dibuat ulang setelah login |
 | Session fixation | Sesi di-flush dan di-invalidate saat logout |
 | Enkripsi sesi | `SESSION_ENCRYPT=true` |
@@ -192,7 +192,7 @@ endpoint admin berbasis API dapat dibatasi dengan `ability:admin`.
 | Alumni | `alumni@pesat.sch.id` | `password` |
 
 > Password demo hanya untuk lingkungan lokal. Pada pengujian fitur ubah password,
-> kebijakan password baru (min. 12 karakter kompleks) tetap berlaku.
+> kebijakan password baru (min. 8 karakter) tetap berlaku.
 
 ---
 
