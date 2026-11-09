@@ -202,3 +202,58 @@ Sistem membutuhkan pembedaan role saat registrasi (siswa/alumni) karena alur dan
 - 100% siswa kelas bekerja memiliki minimal satu CV aktif dalam sistem dalam satu bulan setelah rilis.
 - Data alumni baru tercatat otomatis dari momen rilis, tanpa data yang hilang seperti sebelumnya.
 - Spreadsheet manual untuk lamaran kelas bekerja tidak lagi digunakan setelah rilis.
+---
+
+# Konvensi Kode & Konfigurasi Proyek
+
+Bagian ini adalah ringkasan konvensi implementasi. Jika bertentangan dengan PRD
+di atas, PRD menang; perbarui bagian ini saat konvensi berubah.
+
+## Stack
+
+- Laravel 13 + Blade (Breeze), Tailwind CSS **3** (bukan v4), Alpine.js, Vite 8.
+- Build CSS memakai PostCSS: `tailwind.config.js` + `postcss.config.js`.
+  Jangan menambahkan `@tailwindcss/vite` atau sintaks `@theme`/`@source` v4.
+
+## Peran & Otorisasi
+
+- Nilai `users.role` hanya: `siswa`, `alumni`, `admin` (enum `App\Enums\UserRole`).
+- Registrasi mandiri hanya boleh `siswa` dan `alumni`; admin dibuat lewat seeder.
+- Middleware `role:siswa,alumni` mendukung beberapa peran sekaligus.
+- Route per area: publik di `routes/web.php`, admin di `routes/admin.php`
+  (prefix `/admin`, nama `admin.*`), API di `routes/api.php` (`auth:sanctum`).
+- Siswa/alumni → `/dashboard`; admin → `/admin`. `role:admin` wajib di route admin.
+
+## Keamanan
+
+- Password baru wajib mengikuti `Password::defaults()` (min 8 karakter, tanpa
+  syarat kapital/angka/simbol) dari `AppServiceProvider`.
+- Semua form web memakai CSRF bawaan; jangan nonaktifkan `SecurityHeaders`.
+- Cookie sesi: `HttpOnly`, `SameSite=Lax`, `Secure` otomatis di non-local,
+  `SESSION_ENCRYPT=true`.
+- Token API: Sanctum, prefix `cvb_`, kedaluwarsa 7 hari, ability = nilai role.
+  Cabut semua token saat password diganti (sudah di `PasswordController`).
+- Operasi sensitif (profil, ubah password) di belakang `password.confirm`.
+
+## Pola Kode
+
+- Model memakai atribut `#[Fillable]`/`#[Hidden]` (gaya Laravel 13), bukan `$fillable`.
+- Validasi di FormRequest (`app/Http/Requests`), bukan di controller bila > 3 field.
+- Semua teks antarmuka berbahasa Indonesia.
+- Warna tema: `ink`, `forest`, `moss`, `mint`, `fog`, `mist`, `clay` (lihat `tailwind.config.js`).
+  Hindari `gray-*`/`indigo-*`.
+
+## Testing
+
+- `php artisan test` (Pest, `RefreshDatabase` aktif untuk `Feature`).
+- Untuk route di belakang `password.confirm`, gunakan helper `actingAsConfirmed($this, $user)`.
+- Setiap perubahan otorisasi wajib punya test 403/401.
+
+## Perintah rutin
+
+```bash
+php artisan migrate --seed   # seeder idempoten (updateOrCreate)
+npm run build                # atau npm run dev
+php artisan test
+./vendor/bin/pint
+```
